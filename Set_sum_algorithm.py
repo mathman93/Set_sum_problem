@@ -3,6 +3,7 @@
 # of entries sum to an element of a given integer set.
 # Last Modified: 2/23/2020
 # Author(s): Timothy Anglea
+# Need to check that modified dictionary can be search through properly if vertices are removed
 
 import math
 #import random
@@ -132,7 +133,7 @@ for num in range(len(finalcount_number),network_size+1):
 	print("Values with only two connections: {0}".format(length2_list)) # Include for debugging
 	
 	# Modify network to simplify search, if possible
-	mod_dict = set_sum_dict # Store copy of network dictionary to modify
+	mod_dict = dict(set_sum_dict) # Store copy of network dictionary to modify
 	if len(length2_list) > 1: # If there are at least two vertices with only two neighbors...
 		removed_v = [] # Empty
 		for v in length2_list: # Check each vertex with only two edges
@@ -142,14 +143,25 @@ for num in range(len(finalcount_number),network_size+1):
 			for n in neighbor_v:
 				if n in length2_list: # If the neighbor also has only two edges
 					pass
+					neighbor_n = mod_dict[n] # Get neighbors of n
 					# Remove n from mod_dict
-					# May want to move set_sum_dict entry for n to a new dictionary if I want to recreate the actual path
+					for x in neighbor_n:
+						mod_dict[x].remove(n) # Remove connection to node n from neighbors of n
+					del mod_dict[n] # Delete entry of node n from dictionary
+					#memory_dict[n] = neighbor_n # Move entry for n to a new dictionary if I want to recreate the actual path
 					# Make other neighbor of n (that is not v) to be a neighbor of v (and vice-versa)
+					neighbor_n.remove(v)
+					o = neighbor_n[0] # Other neighbor of n that is not v
+					mod_dict[v].append(o)
+					mod_dict[o].append(v)
 					# Add n to removed_v list
+					removed_v.append(n)
 				# Else, we continue on.
 			# End for n
 		# End for v ...
 	# End if len(...) > 1
+	print("Modified Dictionary", mod_dict) # Include for debugging
+	print("Node reduction:", len(removed_v))
 	
 	# Begin checking for paths
 	finalcount = 0
@@ -159,7 +171,7 @@ for num in range(len(finalcount_number),network_size+1):
 		print("Searching graph size of {0}...".format(num))
 		# pick a starting vertex, and create a path with that
 		for x in range(1, num + 1): # x is the starting vertex
-			count = search(x, set_sum_dict)
+			count = search(x, mod_dict)
 			finalcount += count
 		# End for x in range(...)
 		print("Sum-Square Sequences of Length {0}: {1}".format(num, finalcount//2))
@@ -179,7 +191,7 @@ for num in range(len(finalcount_number),network_size+1):
 		print("Searching graph size of {0}...".format(num))
 		# pick a starting vertex, and create a path with that
 		x = length1_list[0] # Pick a vertex with only one neighbor.
-		finalcount = search(x, set_sum_dict)
+		finalcount = search(x, mod_dict)
 		print("Sum-Square Sequences of Length {0}: {1}".format(num, finalcount))
 		
 		finalcount_number.append(finalcount)
