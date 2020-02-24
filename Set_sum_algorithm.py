@@ -55,17 +55,79 @@ def search(x, graph_dict):
 	
 	return pathcount
 
+''' Reduce size of graph for easier searching
+	Looks for long chains and shortens them
+	Parameters:
+		graph_dict = dictionary; The network to reduce
+		keep_node = int; starting node of path; keep this in the network when reducing
+	Returns:
+		new_dict = dictionary; reduced dictionary
+'''
+def reduce(graph_dict, keep_node=None):
+	# Modify network to simplify search, if possible
+	new_dict = {} # Empty
+	for i in graph_dict.keys():
+		new_dict[i] = list(graph_dict[i]) # Store copy of network dictionary to modify
+	if keep_node == None:
+		removed_v = [] # Empty
+	else:
+		removed_v = [keep_node] # Do not remove this vertex
+	
+	length2_list = []
+	for n in new_dict.keys():
+		if len(new_dict[n]) == 2:
+			length2_list.append(n)
+		# End if len(...) == 1
+	# End for n in keys...
+	#print("Values with only two connections: {0}".format(length2_list)) # Include for debugging
+
+	if len(length2_list) > 1: # If there are at least two vertices with only two neighbors...
+		for v in length2_list: # Check each vertex with only two edges
+			if v in removed_v:
+				continue # Already removed from new_dict
+			neighbor_v = new_dict[v]
+			for n in neighbor_v:
+				if n in length2_list: # If the neighbor also has only two edges
+					neighbor_v2 = new_dict[v] # Get neighbors of v (identical to neighbor_v)
+					# Remove v from new_dict
+					for x in neighbor_v2:
+						new_dict[x].remove(v) # Remove connection to node n from neighbors of n
+					del new_dict[v] # Delete entry of node n from dictionary
+					#memory_dict[v] = neighbor_v # Move entry for n to a new dictionary if I want to recreate the actual path
+					# Make other neighbor of v (that is not n) to be a neighbor of n (and vice-versa)
+					neighbor_v2.remove(n)
+					o = neighbor_v2[0] # Other neighbor of v that is not n
+					new_dict[n].append(o)
+					new_dict[o].append(n)
+					# Add v to removed_v list
+					removed_v.append(v)
+				# Else, we continue on.
+			# End for n
+		# End for v ...
+	# End if len(...) > 1
+	return new_dict
+
 def squares(size):
 	# Return sequence of square numbers to required size
-	return [math.pow(a,2) for a in range(int(math.sqrt(2*size)+1))]
+	return [int(math.pow(a,2)) for a in range(int(math.sqrt(2*size)+1))]
 
 def cubes(size):
 	# Return sequence of cube numbers to required size
-	return [math.pow(a,3) for a in range(int(math.pow((2*size),(1/3))+1))]
+	return [int(math.pow(a,3)) for a in range(int(math.pow((2*size),(1/3))+1))]
 
+def triangular(size):
+	# Return sequence of triangular numbers to required size
+	seq = [1]
+	i = 2
+	while seq[-1] < 2*size:
+		x = int(i*(i+1)/2)
+		seq.append(x)
+		i += 1
+	return seq
 
 seq_dict = {0: [squares, "SquareSum.npy"],
-			1: [cubes, "CubeSum.npy"]
+			1: [cubes, "CubeSum.npy"],
+			2: [triangular, "TriangleSum.npy"]
 			}
 
 ## Main Code ##
@@ -121,47 +183,12 @@ for num in range(len(finalcount_number),network_size+1):
 	
 	# Check for special vertices with two or fewer edges
 	length1_list = []
-	length2_list = []
 	for n in set_sum_dict.keys():
 		if len(set_sum_dict[n]) == 1:
 			length1_list.append(n)
-		elif len(set_sum_dict[n]) == 2:
-			length2_list.append(n)
 		# End if len(...) == 1
 	# End for n in keys...
 	print("Values with only one connection: {0}".format(length1_list)) # Include for debugging
-	print("Values with only two connections: {0}".format(length2_list)) # Include for debugging
-	
-	# Modify network to simplify search, if possible
-	mod_dict = dict(set_sum_dict) # Store copy of network dictionary to modify
-	if len(length2_list) > 1: # If there are at least two vertices with only two neighbors...
-		removed_v = [] # Empty
-		for v in length2_list: # Check each vertex with only two edges
-			if v in removed_v:
-				continue # Already removed from mod_dict
-			neighbor_v = mod_dict[v]
-			for n in neighbor_v:
-				if n in length2_list: # If the neighbor also has only two edges
-					pass
-					neighbor_n = mod_dict[n] # Get neighbors of n
-					# Remove n from mod_dict
-					for x in neighbor_n:
-						mod_dict[x].remove(n) # Remove connection to node n from neighbors of n
-					del mod_dict[n] # Delete entry of node n from dictionary
-					#memory_dict[n] = neighbor_n # Move entry for n to a new dictionary if I want to recreate the actual path
-					# Make other neighbor of n (that is not v) to be a neighbor of v (and vice-versa)
-					neighbor_n.remove(v)
-					o = neighbor_n[0] # Other neighbor of n that is not v
-					mod_dict[v].append(o)
-					mod_dict[o].append(v)
-					# Add n to removed_v list
-					removed_v.append(n)
-				# Else, we continue on.
-			# End for n
-		# End for v ...
-	# End if len(...) > 1
-	print("Modified Dictionary", mod_dict) # Include for debugging
-	print("Node reduction:", len(removed_v))
 	
 	# Begin checking for paths
 	finalcount = 0
@@ -171,6 +198,9 @@ for num in range(len(finalcount_number),network_size+1):
 		print("Searching graph size of {0}...".format(num))
 		# pick a starting vertex, and create a path with that
 		for x in range(1, num + 1): # x is the starting vertex
+			mod_dict = reduce(set_sum_dict, x)
+			#print("Modified Dictionary", mod_dict) # Include for debugging
+			#print("Original Dictionary", set_sum_dict) # Include for debugging
 			count = search(x, mod_dict)
 			finalcount += count
 		# End for x in range(...)
@@ -191,16 +221,19 @@ for num in range(len(finalcount_number),network_size+1):
 		print("Searching graph size of {0}...".format(num))
 		# pick a starting vertex, and create a path with that
 		x = length1_list[0] # Pick a vertex with only one neighbor.
+		mod_dict = reduce(set_sum_dict, x)
+		#print("Modified Dictionary", mod_dict) # Include for debugging
+		#print("Original Dictionary", set_sum_dict) # Include for debugging
 		finalcount = search(x, mod_dict)
 		print("Sum-Square Sequences of Length {0}: {1}".format(num, finalcount))
 		
 		finalcount_number.append(finalcount)
 		
 	# End if len(length1_list)...
+	# Save list of total paths for future use
+	np.save(file_name, finalcount_number)
 # End for num in range...
 
-# Save list of total paths for future use
-np.save(file_name, finalcount_number)
 # Plot total paths versus network size
 seq_length = list(range(len(finalcount_number)))
 plt.plot(seq_length, finalcount_number, "o")
