@@ -3,7 +3,7 @@
 # of entries sum to an element of a given integer set.
 # Last Modified: 2/24/2020
 # Author(s): Timothy Anglea
-# Need to check that modified dictionary can be search through properly if vertices are removed
+# Want to update search algorithm to use multiple processes and compare algorithm speed increase
 
 import math
 #import random
