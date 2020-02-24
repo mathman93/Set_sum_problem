@@ -1,7 +1,7 @@
 # Set_sum_algorithm.py
 # Finds total number of all integer sequences of length n such that consecutive pairs
 # of entries sum to an element of a given integer set.
-# Last Modified: 2/23/2020
+# Last Modified: 2/24/2020
 # Author(s): Timothy Anglea
 # Need to check that modified dictionary can be search through properly if vertices are removed
 
@@ -79,7 +79,7 @@ def reduce(graph_dict, keep_node=None):
 			length2_list.append(n)
 		# End if len(...) == 1
 	# End for n in keys...
-	#print("Values with only two connections: {0}".format(length2_list)) # Include for debugging
+	print("Values with only two connections: {0}".format(length2_list)) # Include for debugging
 
 	if len(length2_list) > 1: # If there are at least two vertices with only two neighbors...
 		for v in length2_list: # Check each vertex with only two edges
@@ -125,9 +125,49 @@ def triangular(size):
 		i += 1
 	return seq
 
+def pentagonal(size):
+	# Return sequence of pentagonal numbers to required size
+	seq = [1]
+	i = 2
+	while seq[-1] < 2*size:
+		x = int(i*((3*i)-1)/2)
+		seq.append(x)
+		i += 1
+	return seq
+
+def tetrahedral(size):
+	# Return sequence of tetrahedral numbers to required size
+	seq = [1]
+	i = 2
+	while seq[-1] < 2*size:
+		x = int(i*(i+1)*(i+2)/6)
+		seq.append(x)
+		i += 1
+	return seq
+
+def fibonacci(size):
+	# Return sequence of Fibonacci numbers to required size
+	seq = [2,3] # Don't need numbers <= 1
+	while seq[-1] < 2*size:
+		x = seq[-1] + seq[-2]
+		seq.append(x)
+	return seq
+
+def lucas(size):
+	# Return sequence of Lucas numbers to required size
+	seq = [3,4] # Don't need numbers <= 1
+	while seq[-1] < 2*size:
+		x = seq[-1] + seq[-2]
+		seq.append(x)
+	return seq
+
 seq_dict = {0: [squares, "SquareSum.npy"],
 			1: [cubes, "CubeSum.npy"],
-			2: [triangular, "TriangleSum.npy"]
+			2: [triangular, "TriangleSum.npy"],
+			3: [pentagonal, "PentagonSum.npy"],
+			4: [tetrahedral, "TetraSum.npy"],
+			5: [fibonacci, "FibSum.npy"],
+			6: [lucas, "LucasSum.npy"]
 			}
 
 ## Main Code ##
@@ -201,6 +241,7 @@ for num in range(len(finalcount_number),network_size+1):
 			mod_dict = reduce(set_sum_dict, x)
 			#print("Modified Dictionary", mod_dict) # Include for debugging
 			#print("Original Dictionary", set_sum_dict) # Include for debugging
+			print("Network Reduction:", len(set_sum_dict.keys())-len(mod_dict.keys()))
 			count = search(x, mod_dict)
 			finalcount += count
 		# End for x in range(...)
@@ -221,9 +262,10 @@ for num in range(len(finalcount_number),network_size+1):
 		print("Searching graph size of {0}...".format(num))
 		# pick a starting vertex, and create a path with that
 		x = length1_list[0] # Pick a vertex with only one neighbor.
-		mod_dict = reduce(set_sum_dict, x)
+		mod_dict = reduce(set_sum_dict)
 		#print("Modified Dictionary", mod_dict) # Include for debugging
 		#print("Original Dictionary", set_sum_dict) # Include for debugging
+		print("Network Reduction:", len(set_sum_dict.keys())-len(mod_dict.keys()))
 		finalcount = search(x, mod_dict)
 		print("Sum-Square Sequences of Length {0}: {1}".format(num, finalcount))
 		
