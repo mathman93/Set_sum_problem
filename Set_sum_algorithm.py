@@ -191,7 +191,8 @@ for num in range(len(finalcount_number),network_size+1):
 np.save(file_name, finalcount_number)
 # Plot total paths versus network size
 seq_length = list(range(len(finalcount_number)))
-plt.semilogy(seq_length, finalcount_number, "o")
+plt.plot(seq_length, finalcount_number, "o")
+plt.yscale("log")
 plt.grid()
 plt.show() # Include to display plot
 
