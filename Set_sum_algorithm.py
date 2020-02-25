@@ -1,7 +1,7 @@
 # Set_sum_algorithm.py
 # Finds total number of all integer sequences of length n such that consecutive pairs
 # of entries sum to an element of a given integer set.
-# Last Modified: 2/24/2020
+# Last Modified: 2/25/2020
 # Author(s): Timothy Anglea
 # Want to update search algorithm to use multiple processes and compare algorithm speed increase
 
@@ -12,6 +12,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 ## Functions ##
+''' Displays current date and time to the screen
+'''
+def DisplayDateTime():
+	# Month day, Year, Hour:Minute:Seconds
+	date_time = time.strftime("%B %d, %Y, %H:%M:%S", time.localtime())
+	print("Current Time:", date_time)
+
 ''' Search for all Hamiltonian paths in graph starting a specific vertex
 	Parameters:
 		x = int; Starting vertex
@@ -35,6 +42,7 @@ def search(x, graph_dict):
 			#print("Final Answer:", current_path) # Include for debugging
 			pathcount += 1 # We have found a solution
 			continue # Go to next path
+			#break # Use this if only wanting to find one solution
 		
 		point = current_path[-1] # Take the last vertex of the current path
 		# Find all vertices that can follow point
@@ -50,6 +58,7 @@ def search(x, graph_dict):
 	# End while path_list
 	end_time = time.time()
 	print("Time of search: {0:.3f} seconds".format(end_time-start_time))
+	DisplayDateTime()
 	print("Number of loops: {0}".format(loop))
 	#print(" Total paths found after searching vertex {0}: {1}".format(x, finalcount))
 	
@@ -203,6 +212,7 @@ except FileNotFoundError:
 	print("File does not exist. Creating...")
 	finalcount_number = []
 
+DisplayDateTime()
 # Main Loop: Find Hamiltonian paths in the network
 for num in range(len(finalcount_number),network_size+1):
 	# Create network dictionary
