@@ -170,13 +170,24 @@ def lucas(size):
 		seq.append(x)
 	return seq
 
+def hypertetra(size):
+	# Return sequence of hypertetrahedral numbers to required size
+	seq = [1]
+	i = 2
+	while seq[-1] < 2*size:
+		x = int(i*(i+1)*(i+2)*(i+3)/24)
+		seq.append(x)
+		i += 1
+	return seq
+
 seq_dict = {0: [squares, "SquareSum.npy"],
 			1: [cubes, "CubeSum.npy"],
 			2: [triangular, "TriangleSum.npy"],
 			3: [pentagonal, "PentagonSum.npy"],
 			4: [tetrahedral, "TetraSum.npy"],
 			5: [fibonacci, "FibSum.npy"],
-			6: [lucas, "LucasSum.npy"]
+			6: [lucas, "LucasSum.npy"],
+			7: [hypertetra, "HypertetraSum.npy"]
 			}
 
 ## Main Code ##
