@@ -180,6 +180,23 @@ def hypertetra(size):
 		i += 1
 	return seq
 
+def primes(size):
+	seq = [] # List of prime numbers
+	pflag = True
+	for n in range(2,2*size):
+		for p in seq:
+			x = n/p
+			if x == int(x):
+				pflag = False
+				break
+			#End if
+		#End for p
+		if pflag:
+			seq.append(n)
+		pflag = True
+	#End for n
+	return seq
+
 seq_dict = {0: [squares, "SquareSum.npy"],
 			1: [cubes, "CubeSum.npy"],
 			2: [triangular, "TriangleSum.npy"],
@@ -187,7 +204,8 @@ seq_dict = {0: [squares, "SquareSum.npy"],
 			4: [tetrahedral, "TetraSum.npy"],
 			5: [fibonacci, "FibSum.npy"],
 			6: [lucas, "LucasSum.npy"],
-			7: [hypertetra, "HypertetraSum.npy"]
+			7: [hypertetra, "HypertetraSum.npy"],
+			8: [primes, "PrimeSum.npy"]
 			}
 
 ## Main Code ##
@@ -259,6 +277,7 @@ for num in range(len(finalcount_number),network_size+1):
 		print("Searching graph size of {0}...".format(num))
 		# pick a starting vertex, and create a path with that
 		for x in range(1, num + 1): # x is the starting vertex
+			#mod_dict = set_sum_dict # Include for no reductions
 			mod_dict = reduce(set_sum_dict, x)
 			#print("Modified Dictionary", mod_dict) # Include for debugging
 			#print("Original Dictionary", set_sum_dict) # Include for debugging
@@ -283,6 +302,7 @@ for num in range(len(finalcount_number),network_size+1):
 		print("Searching graph size of {0}...".format(num))
 		# pick a starting vertex, and create a path with that
 		x = length1_list[0] # Pick a vertex with only one neighbor.
+		#mod_dict = set_sum_dict # Include for no reduction
 		mod_dict = reduce(set_sum_dict)
 		#print("Modified Dictionary", mod_dict) # Include for debugging
 		#print("Original Dictionary", set_sum_dict) # Include for debugging
