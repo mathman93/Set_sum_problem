@@ -45,7 +45,7 @@ def search(x, graph_dict):
 		
 		point = current_path[-1] # Take the last vertex of the current path
 		# Find all vertices that can follow point
-		for neighbor in graph_dict[point]:
+		for neighbor in reversed(graph_dict[point]):
 			if neighbor not in current_path: # If the neighbor number hasn't been used yet...
 				new_path = list(current_path) # Make a new path based on the current path
 				new_path.append(neighbor) # Add the neighbor point to the new path
