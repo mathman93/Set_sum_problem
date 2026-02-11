@@ -231,7 +231,7 @@ while True:
 		network_size = 1 # Default if exiting early; Plot total paths graph
 		break
 	except:
-		print("That is not a whole number. Please try agian.")
+		print("That is not a whole number. Please try again.")
 
 # Check for previous file for the sequence option
 file_name = seq_dict[seq_opt][1] # Get file name for sequence
