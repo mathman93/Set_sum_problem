@@ -55,7 +55,7 @@ set_seq = [a**2 for a in range(1, int((2*max(vals))**0.5)+1)] # Squares
 set_sum_dict = {} # Empty	
 for i in vals: # Fill set_sum_dict
     set_sum_dict[i] = [] # Initially empty list
-    new = [int(a - i) for a in set_seq if i<a and a<(2*i)]
+    new = [int(a - i) for a in set_seq if i<a and a<(2*i)] # Assumes vals are in ascending order.
     for j in new:
         if j in vals: # Only add if j is in the sequence
             # Add link to dictionary for both entries
